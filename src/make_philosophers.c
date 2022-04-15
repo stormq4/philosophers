@@ -6,7 +6,7 @@
 /*   By: stormdequay <stormdequay@student.codam.      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/02/24 14:05:59 by stormdequay   #+#    #+#                 */
-/*   Updated: 2022/04/12 10:21:44 by sde-quai      ########   odam.nl         */
+/*   Updated: 2022/04/13 14:07:31 by sde-quai      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,9 @@ int	make_philosophers(t_rules *rules, t_philo **philo)
 		phil[i].philo_id = i + 1;
 		phil[i].rules = rules;
 		phil[i].cycle_time = rules->b_time;
+		phil[i].done = FALSE;
 		pthread_mutex_init(&phil[i].cycle, NULL);
+		pthread_mutex_init(&phil[i].is_done, NULL);
 		i++;
 	}
 	if (malloc_fork(rules, philo) == error)

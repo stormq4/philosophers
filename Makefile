@@ -1,7 +1,7 @@
 NAME := philo
 
 ifdef sanitize
-CFLAGS := -Wall -Wextra -fsanitize=address -g
+CFLAGS := -Wall -Wextra -fsanitize=thread -g
 else
 CFLAGS := -Wall -Wextra -Werror -g
 endif

@@ -6,7 +6,7 @@
 /*   By: sde-quai <sde-quai@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/04/06 15:08:24 by sde-quai      #+#    #+#                 */
-/*   Updated: 2022/04/13 10:41:33 by sde-quai      ########   odam.nl         */
+/*   Updated: 2022/04/14 16:22:35 by sde-quai      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,6 @@ static int	eating(t_philo *philo)
 	philo->cycle_time = return_time();
 	pthread_mutex_unlock(&philo->cycle);
 	smart_sleep((int)philo->rules->tte);
-	pthread_mutex_unlock(&philo->n_fork->fork);
-	pthread_mutex_unlock(&philo->fork->fork);
 	return (succes);
 }
 
@@ -54,16 +52,37 @@ static int	eating(t_philo *philo)
  * @param i what round in the simulation
  * @return int for succes or error
  */
-int	simulation(t_philo *philo, size_t i)
+static int	simulation(t_philo *philo, size_t i)
 {
 	if (eating(philo) == error)
 		return (error);
+	pthread_mutex_unlock(&philo->n_fork->fork);
+	pthread_mutex_unlock(&philo->fork->fork);
 	if (print_action("is sleeping", philo, NULL, NULL) == error)
 		return (error);
 	smart_sleep((int)philo->rules->tts);
 	if (i < philo->rules->nr_must_eat - 1)
 		if (print_action("is thinking", philo, NULL, NULL) == error)
 			return (error);
+	return (succes);
+}
+
+/**
+ * @brief handles edge cases and lets even nr's sleep
+ * 
+ * @param philo 
+ * @return int 
+ */
+static int	initialize_simulation(t_philo *philo)
+{
+	print_action("is thinking", philo, NULL, NULL);
+	if (philo->rules->philo_nr == 1)
+	{
+		print_action("has taken a fork", philo, NULL, NULL);
+		return (error);
+	}
+	if (philo->philo_id % 2 == 0)
+		smart_sleep(philo->rules->tte * 0.9);
 	return (succes);
 }
 
@@ -80,31 +99,24 @@ void	*philo_start(void *arr)
 	size_t	i;
 
 	philo = (t_philo *)arr;
-	print_action("is thinking", philo, NULL, NULL);
-	usleep(100);
-	if (philo->rules->philo_nr == 1)
-	{
-		print_action("has taken a fork", philo, NULL, NULL);
+	if (initialize_simulation(philo) == error)
 		return (NULL);
-	}
-	if (philo->philo_id % 2 == 0)
-		usleep(philo->rules->tte * 500);
 	if (philo->rules->nr_must_eat)
 	{
 		i = 0;
 		while (i < philo->rules->nr_must_eat)
 		{
 			if (simulation(philo, i) == FALSE)
-				return (NULL) ;
+				break ;
 			i++;
 		}
-		pthread_mutex_lock(&philo->rules->philo_done);
-		philo->rules->philos_done++;
-		pthread_mutex_unlock(&philo->rules->philo_done);
 	}
 	else
 		while (1)
 			if (simulation(philo, 0) == FALSE)
 				break ;
+	pthread_mutex_lock(&philo->is_done);
+	philo->done = TRUE;
+	pthread_mutex_unlock(&philo->is_done);
 	return (NULL);
 }

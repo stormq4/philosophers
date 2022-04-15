@@ -6,7 +6,7 @@
 /*   By: sde-quai <sde-quai@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/04/07 13:59:33 by sde-quai      #+#    #+#                 */
-/*   Updated: 2022/04/13 10:43:07 by sde-quai      ########   odam.nl         */
+/*   Updated: 2022/04/14 16:02:46 by sde-quai      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,15 @@ int	print_action(char *str, t_philo *philo, t_fork *fork, t_fork *n_fork)
 	pthread_mutex_lock(&philo->rules->print);
 	if (philo->rules->dead == TRUE)
 	{
+		pthread_mutex_unlock(&philo->rules->print);
 		if (fork)
 			pthread_mutex_unlock(&fork->fork);
 		if (n_fork)
 			pthread_mutex_unlock(&n_fork->fork);
-		pthread_mutex_unlock(&philo->rules->print);
 		return (error);
 	}
-	printf("%lu %zu %s\n", return_time() - philo->rules->b_time, philo->philo_id, str);
+	printf("%lu %zu %s\n", return_time() - philo->rules->b_time, \
+	philo->philo_id, str);
 	pthread_mutex_unlock(&philo->rules->print);
 	return (succes);
 }
@@ -44,7 +45,13 @@ int	print_action(char *str, t_philo *philo, t_fork *fork, t_fork *n_fork)
  */
 void	print_dead(t_rules *rules)
 {
-	if (rules->dead_philo_id)
+	usleep(1000);
+	pthread_mutex_lock(&rules->print);
+	if (rules->dead_philo_id && rules->dead == TRUE)
+	{
 		printf("%lu %zu %s\n", return_time() - rules->b_time, \
 		rules->dead_philo_id, "died");
+		pthread_mutex_unlock(&rules->print);
+	}
+	pthread_mutex_unlock(&rules->print);
 }

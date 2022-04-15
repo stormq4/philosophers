@@ -6,7 +6,7 @@
 /*   By: stormdequay <stormdequay@student.codam.      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/02/24 11:00:07 by stormdequay   #+#    #+#                 */
-/*   Updated: 2022/04/12 15:06:55 by sde-quai      ########   odam.nl         */
+/*   Updated: 2022/04/15 15:55:25 by sde-quai      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,20 @@
  * @param rules 
  * @return int for erroor or succes
  */
-static int	initialize_mutex_rules(t_rules *rules)
+static int	initialize_mutex_rules(t_rules *rules, char **argv, int argc)
 {
+	if (argc == 6)
+	{
+		if (ft_atoi(argv[5]) == 0)
+			return (error);
+		rules->nr_must_eat = (size_t)ft_atoi(argv[5]);
+	}
+	else
+		rules->nr_must_eat = (size_t)FALSE;
 	rules->dead = FALSE;
 	rules->dead_philo_id = 0;
-	rules->philos_done = 0;
 	rules->b_time = return_time();
 	if (pthread_mutex_init(&rules->print, NULL) != thread_succes)
-		return (error);
-	if (pthread_mutex_init(&rules->philo_done, NULL) != thread_succes)
 		return (error);
 	return (succes);
 }
@@ -53,15 +58,11 @@ int	define_rules(t_rules *rules, int argc, char **argv)
 	}
 	rules->philo_nr = (size_t)ft_atoi(argv[1]);
 	if (rules->philo_nr == 0)
-		return (errno);
+		return (error);
 	rules->ttd = (size_t)ft_atoi(argv[2]);
 	rules->tte = (size_t)ft_atoi(argv[3]);
 	rules->tts = (size_t)ft_atoi(argv[4]);
-	if (argc == 6)
-		rules->nr_must_eat = (size_t)ft_atoi(argv[5]);
-	else
-		rules->nr_must_eat = (size_t)FALSE;
-	if (initialize_mutex_rules(rules) == error)
+	if (initialize_mutex_rules(rules, argv, argc) == error)
 		return (error);
 	return (succes);
 }

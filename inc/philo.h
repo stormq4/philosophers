@@ -6,7 +6,7 @@
 /*   By: stormdequay <stormdequay@student.codam.      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/02/24 14:15:36 by stormdequay   #+#    #+#                 */
-/*   Updated: 2022/04/13 10:46:58 by sde-quai      ########   odam.nl         */
+/*   Updated: 2022/04/14 11:53:10 by sde-quai      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,6 @@ typedef struct s_rules {
 	pthread_mutex_t	print;
 	t_bool			dead;
 	size_t			dead_philo_id;
-	pthread_mutex_t	philo_done;
-	size_t			philos_done;
 	unsigned long	b_time;
 }				t_rules;
 
@@ -72,7 +70,9 @@ typedef struct s_philo{
 	t_fork			*n_fork;
 	pthread_t		thread_id;
 	pthread_mutex_t	cycle;
+	pthread_mutex_t	is_done;
 	unsigned long	cycle_time;
+	t_bool			done;
 	t_rules			*rules;
 }				t_philo;
 

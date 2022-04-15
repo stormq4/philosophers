@@ -6,7 +6,7 @@
 /*   By: sde-quai <sde-quai@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/04/04 15:01:54 by sde-quai      #+#    #+#                 */
-/*   Updated: 2022/04/12 14:22:42 by sde-quai      ########   odam.nl         */
+/*   Updated: 2022/04/13 14:08:00 by sde-quai      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ int	free_forks(t_philo **philo, int f_fail)
 			break ;
 		pthread_mutex_destroy(&phil[i].fork->fork);
 		pthread_mutex_destroy(&phil[i].cycle);
+		pthread_mutex_destroy(&phil[i].is_done);
 		free(phil[i].fork);
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: sde-quai <sde-quai@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/04/12 15:22:39 by sde-quai      #+#    #+#                 */
-/*   Updated: 2022/04/13 10:55:10 by sde-quai      ########   odam.nl         */
+/*   Updated: 2022/04/14 16:12:23 by sde-quai      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,14 @@ unsigned long	return_time(void)
 	return (time);
 }
 
+/**
+ * @brief usleep has too much interference
+ * 
+ * @param m_sec milliseconds to sleep
+ */
 void	smart_sleep(int m_sec)
 {
-	unsigned long start;
+	unsigned long	start;
 
 	start = return_time();
 	while ((int)(return_time() - start) < m_sec)
